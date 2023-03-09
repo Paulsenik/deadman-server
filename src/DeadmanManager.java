@@ -18,13 +18,13 @@ public final class DeadmanManager {
         u.setDeathMessage("Ich bin dann mal weg");
     }
 
-    private RequestHandler requestHandler;
-    private MailHandler mailHandler;
-    private Timer timeChecker;
+    private final RequestHandler requestHandler;
+    private final MailHandler mailHandler;
+    private final Timer timeChecker;
 
     private DeadmanManager(int httpPort, String mailAddress, long checkInterval) throws IOException {
         requestHandler = new RequestHandler(httpPort, this);
-        mailHandler = new MailHandler(mailAddress);
+        mailHandler = new MailHandler(mailAddress, this);
         timeChecker = new Timer();
 
         timeChecker.scheduleAtFixedRate(new TimerTask() {
@@ -66,8 +66,6 @@ public final class DeadmanManager {
                 success = success | mailHandler.sendMail(r, title, message);
             }
         }
-        if (!success)
-            System.out.println("Mail failed");
         return success;
     }
 
