@@ -3,13 +3,10 @@
 A simple Dead-Man Switch that notices, when a user has not reported its status over http and sends Emergency-Mails to
 the users's specified Mail-List
 
-***Local Testing with username "testuser"***:
+***Local Testing-Interface with test-user***:
 
-_Test_
-> http://localhost:8000/testuser/test?key=testkey
+> http://localhost/
 
-_Alive-Check_
-> http://localhost:8000/testuser/alive?key=testkey
 
 ## Server
 

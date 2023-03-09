@@ -140,6 +140,7 @@ public final class RequestHandler {
         }
     }
 
+    /**
     public static void main(String[] args) throws URISyntaxException {
         URI uri = new URI("http://localhost:8000/");
 
@@ -149,5 +150,6 @@ public final class RequestHandler {
         for (String k : map.keySet())
             System.out.println(k + " " + map.get(k));
     }
+     */
 
 }
