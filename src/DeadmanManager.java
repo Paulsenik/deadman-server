@@ -24,7 +24,7 @@ public final class DeadmanManager {
 
     private DeadmanManager(int httpPort, String mailAddress, long checkInterval) throws IOException {
         requestHandler = new RequestHandler(httpPort, this);
-        mailHandler = new MailHandler(mailAddress);
+        mailHandler = new MailHandler(mailAddress, this);
         timeChecker = new Timer();
 
         timeChecker.scheduleAtFixedRate(new TimerTask() {

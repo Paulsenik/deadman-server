@@ -47,7 +47,7 @@ public class User {
 
             lastMessage = message;
 
-            manager.log("[alive] :: [user=" + userName + "] :: [unix=" + unixTimestamp + "] :: [device=" + device + "] :: [message=" + message + "] :: successful");
+            manager.log("[alive] :: [user=" + userName + "],[unix=" + unixTimestamp + "],[device=" + device + "],[message=" + message + "] :: successful");
             return true;
         }
         return false;
@@ -56,7 +56,7 @@ public class User {
     public boolean checkTest(String key, String device, String message, long unixTimestamp) {
         if (key.equals(this.key)) {
             activateTestEvents();
-            manager.log("[test] :: [user=" + userName + "] :: [unix=" + unixTimestamp + "] :: [device=" + device + "] :: [message=" + message + "] :: successful");
+            manager.log("[test] :: [user=" + userName + "],[unix=" + unixTimestamp + "],[device=" + device + "],[message=" + message + "] :: successful");
             return true;
         }
         return false;
