@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class DeadmanManager {
 
@@ -10,7 +11,7 @@ public final class DeadmanManager {
         DeadmanManager dm = new DeadmanManager(80, "deadman@paulsen.ooo", 1);
 
         // TODO - REMOVE TESTING
-        User u = new User("testuser", "testkey", dm);
+        User u = new User("testuser", "testkey", dm.unix(), "");
         u.addUserMail("test@paulsen.ooo");
         u.addContactMail("it@paulsen.ooo");
         u.setMaxWarnTime(10);
@@ -21,6 +22,8 @@ public final class DeadmanManager {
     private final RequestHandler requestHandler;
     private final MailHandler mailHandler;
     private final Timer timeChecker;
+    private static List<User> users = new CopyOnWriteArrayList<>();
+
 
     private DeadmanManager(int httpPort, String mailAddress, long checkInterval) throws IOException {
         requestHandler = new RequestHandler(httpPort, this);
@@ -30,35 +33,35 @@ public final class DeadmanManager {
         timeChecker.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                triggerCheck();
+                for (User u : users) {
+                    checkUser(u);
+                }
             }
         }, 1000, 1000 * checkInterval);
     }
 
-    public void triggerCheck() {
-        for (User man : User.getUsers()) {
-            if (man.getManager() == this) {
-                man.checkTime();
-            }
-        }
+    /**
+     * Chec
+     */
+    public void checkUser(User u) {
+        // TODO
     }
 
-    public boolean triggerAlive(String userName, Map<String, String> parameter) {
-        for (User man : User.getUsers()) {
-            if (man.getManager() == this && man.getUserName().equals(userName))
-                return man.updateAlive(parameter.get("key"), parameter.get("device"), parameter.get("message"), unix());
-        }
+    public boolean checkAlive(String userName, Map<String, String> parameter) {
+        // TODO
         return false;
     }
 
-    public boolean triggerTest(String userName, Map<String, String> parameter) {
-        for (User man : User.getUsers()) {
-            if (man.getManager() == this && man.getUserName().equals(userName))
-                return man.checkTest(parameter.get("key"), parameter.get("device"), parameter.get("message"), unix());
-        }
+    public boolean checkTest(String userName, Map<String, String> parameter) {
+        // TODO
         return false;
     }
 
+    /**
+     * Sends same mails to a number of receivers
+     *
+     * @return true if some mails could be sent
+     */
     public boolean triggerMail(Collection<String> receiver, String title, String message) {
         boolean success = false;
         for (String r : receiver) {
@@ -71,7 +74,7 @@ public final class DeadmanManager {
 
     public void log(String messsage) {
         // TODO - Replace with logger
-        System.out.println("[LOG] :: " + messsage);
+        System.out.println("[LOG] :: " + System.currentTimeMillis() + " :: " + messsage);
     }
 
     /**
