@@ -1,10 +1,8 @@
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class User {
+    private static List<User> users = new CopyOnWriteArrayList<>();
 
     private boolean alive = true;
     private Set<String> userMails = new HashSet<>();
@@ -29,8 +27,8 @@ public class User {
         this.lastMessage = lastMessage;
 
         deathMessage = "User might not be alive. Last response was: " + lastMessage;
+        users.add(this);
     }
-
 
     public String getName() {
         return userName;
@@ -72,6 +70,39 @@ public class User {
             return false;
         maxWarnTime = time;
         return true;
+    }
+
+    public String getTestMessage() {
+        Date d = new Date(lastSeenUnix);
+        return "Dear " + userName + ",\nthis test-mail was sent to you as a test by submitting a correct GET-Request to the service.\n\nLast alive-message (" + d.toString() + "):\n" + lastMessage;
+    }
+
+    public Set<String> getUserMails() {
+        return userMails;
+    }
+
+    public Set<String> getContactMails() {
+        return contactMails;
+    }
+
+    public static List<User> getUsers() {
+        return users;
+    }
+
+    /**
+     * Only returns the correct user if name and key matches
+     *
+     * @param userName name of the user
+     * @param key      the secret key, that authenticates the user
+     * @return the User - null if no user with the matching key was found
+     */
+    public static User getUser(String userName, String key) {
+        for (User u : users) {
+            if (userName.equals(u.getName()) && key.equals(u.key)) {
+                return u;
+            }
+        }
+        return null;
     }
 
 }

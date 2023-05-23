@@ -1,10 +1,12 @@
 import java.io.IOException;
+import java.io.InvalidObjectException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class DeadmanManager {
 
     public static final String SRC_indexFile = "web/index.html";
+    public static DeadmanManager instance;
 
 
     public static void main(String[] args) throws IOException {
@@ -22,18 +24,21 @@ public final class DeadmanManager {
     private final RequestHandler requestHandler;
     private final MailHandler mailHandler;
     private final Timer timeChecker;
-    private static List<User> users = new CopyOnWriteArrayList<>();
 
 
     private DeadmanManager(int httpPort, String mailAddress, long checkInterval) throws IOException {
-        requestHandler = new RequestHandler(httpPort, this);
-        mailHandler = new MailHandler(mailAddress, this);
+        if (instance != null)
+            throw new InvalidObjectException("Deadman Can only exist once!");
+        instance = this;
+
+        requestHandler = new RequestHandler(httpPort);
+        mailHandler = new MailHandler(mailAddress);
         timeChecker = new Timer();
 
         timeChecker.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                for (User u : users) {
+                for (User u : User.getUsers()) {
                     checkUser(u);
                 }
             }
@@ -41,20 +46,35 @@ public final class DeadmanManager {
     }
 
     /**
-     * Chec
+     * Checks user, if he has run over the timelimits provided and sends Mails if necessary
      */
     public void checkUser(User u) {
         // TODO
     }
 
-    public boolean checkAlive(String userName, Map<String, String> parameter) {
+    /**
+     * Updates the time-status on the user
+     *
+     * @return true if user-key and alive-check was successful
+     */
+    public boolean updateAlive(String userName, Map<String, String> parameter) {
         // TODO
         return false;
     }
 
-    public boolean checkTest(String userName, Map<String, String> parameter) {
-        // TODO
-        return false;
+    /**
+     * Sends a test-mail to the given user (does not affect alive-counter!)
+     *
+     * @return true if user-key and test was successful
+     */
+    public boolean runTest(String userName, Map<String, String> parameter) {
+        User u = User.getUser(userName, parameter.get("key"));
+
+        if (u == null) {
+            return false;
+        }
+
+        return triggerMail(u.getUserMails(), "(Test) Deadman - " + userName, u.getTestMessage());
     }
 
     /**

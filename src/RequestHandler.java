@@ -10,13 +10,8 @@ import java.net.InetSocketAddress;
 public final class RequestHandler {
 
     private final HttpServer httpServer;
-    DeadmanManager manager;
 
-    public RequestHandler(int port, DeadmanManager manager) throws IOException {
-        if (manager == null)
-            throw new IOException("Manager can't be null!");
-        this.manager = manager;
-
+    public RequestHandler(int port) throws IOException {
         httpServer = HttpServer.create(new InetSocketAddress(port), 0);
         httpServer.createContext("/", new ContextHandler(this));
         httpServer.setExecutor(null); // creates a default executor
@@ -28,7 +23,6 @@ public final class RequestHandler {
     }
 
     void sendWebHTML(HttpExchange e) throws IOException {
-        System.out.println("send");
         String line;
         String resp = "";
 

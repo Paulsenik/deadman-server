@@ -37,7 +37,7 @@ public class ContextHandler implements HttpHandler {
             if (pathElements[1].equals("alive")) {
 
                 //alive successful
-                if (handler.manager.checkAlive(pathElements[0], map)) {
+                if (DeadmanManager.instance.updateAlive(pathElements[0], map)) {
                     respond(e, 200, "Alive-Check successful!");
                 } else {
                     respond(e, 200, "Alive-Check failed!");
@@ -47,7 +47,7 @@ public class ContextHandler implements HttpHandler {
             } else if (pathElements[1].equals("test")) {
 
                 // test successful
-                if (handler.manager.checkTest(pathElements[0], map)) {
+                if (DeadmanManager.instance.runTest(pathElements[0], map)) {
                     respond(e, 200, "Test successful!");
                 } else {
                     respond(e, 200, "Test failed!");
@@ -57,7 +57,7 @@ public class ContextHandler implements HttpHandler {
         }
 
         handler.sendWebHTML(e);
-
+        e.close();
     }
 
     /**
