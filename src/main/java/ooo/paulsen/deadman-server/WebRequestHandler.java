@@ -7,11 +7,11 @@ import java.net.InetSocketAddress;
 // Others Code
 // https://stackoverflow.com/questions/3732109/simple-http-server-in-java-using-only-java-se-api
 
-public final class RequestHandler {
+public final class WebRequestHandler {
 
     private final HttpServer httpServer;
 
-    public RequestHandler(int port) throws IOException {
+    public WebRequestHandler(int port) throws IOException {
         httpServer = HttpServer.create(new InetSocketAddress(port), 0);
         httpServer.createContext("/", new ContextHandler(this));
         httpServer.setExecutor(null); // creates a default executor

@@ -1,4 +1,3 @@
-
 public class MailHandler {
 
     private final String sender;

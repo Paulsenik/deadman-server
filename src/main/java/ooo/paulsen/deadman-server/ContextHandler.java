@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ContextHandler implements HttpHandler {
-    private RequestHandler handler;
+    private WebRequestHandler handler;
 
-    public ContextHandler(RequestHandler handler) {
+    public ContextHandler(WebRequestHandler handler) {
         super();
         this.handler = handler;
     }

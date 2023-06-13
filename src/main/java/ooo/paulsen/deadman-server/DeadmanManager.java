@@ -1,7 +1,6 @@
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class DeadmanManager {
 
@@ -21,7 +20,7 @@ public final class DeadmanManager {
         u.setDeathMessage("Ich bin dann mal weg");
     }
 
-    private final RequestHandler requestHandler;
+    private final WebRequestHandler requestHandler;
     private final MailHandler mailHandler;
     private final Timer timeChecker;
 
@@ -31,7 +30,7 @@ public final class DeadmanManager {
             throw new InvalidObjectException("Deadman Can only exist once!");
         instance = this;
 
-        requestHandler = new RequestHandler(httpPort);
+        requestHandler = new WebRequestHandler(httpPort);
         mailHandler = new MailHandler(mailAddress);
         timeChecker = new Timer();
 
@@ -49,6 +48,18 @@ public final class DeadmanManager {
      * Checks user, if he has run over the timelimits provided and sends Mails if necessary
      */
     public void checkUser(User u) {
+
+        if (!u.isAlive())
+            return;
+
+        // Over WarnTime
+        if (u.getLastSeenUnix() + u.getMaxWarnTime() < unix()) {
+
+            if (u.hasSentWarnMessage()) {
+                triggerMail(u.getContactMails(),"",u.getWarnMessage());
+            }
+        }
+
         // TODO
     }
 
@@ -58,8 +69,19 @@ public final class DeadmanManager {
      * @return true if user-key and alive-check was successful
      */
     public boolean updateAlive(String userName, Map<String, String> parameter) {
-        // TODO
-        return false;
+
+        // User-Auth
+        User u = User.getUser(userName, parameter.get("key"));
+        if (u == null) {
+            return false;
+        }
+
+        String device = parameter.get("device");
+        String lastMessage = parameter.get("message");
+
+        u.updateAlive(unix(), device, lastMessage);
+
+        return true;
     }
 
     /**
@@ -68,8 +90,9 @@ public final class DeadmanManager {
      * @return true if user-key and test was successful
      */
     public boolean runTest(String userName, Map<String, String> parameter) {
-        User u = User.getUser(userName, parameter.get("key"));
 
+        // User-Auth
+        User u = User.getUser(userName, parameter.get("key"));
         if (u == null) {
             return false;
         }
