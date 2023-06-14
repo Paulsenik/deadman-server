@@ -1,3 +1,7 @@
+# Projectspecific
+secrets.json
+
+# IDEs
 ### IntelliJ IDEA ###
 *.iml
 .idea
