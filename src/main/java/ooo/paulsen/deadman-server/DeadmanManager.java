@@ -31,7 +31,7 @@ public final class DeadmanManager {
         instance = this;
 
         requestHandler = new WebRequestHandler(httpPort);
-        mailHandler = new MailHandler(mailAddress);
+        mailHandler = new MailHandler(); // creates MailHandler by reading secrets.json
         timeChecker = new Timer();
 
         timeChecker.scheduleAtFixedRate(new TimerTask() {
@@ -109,7 +109,7 @@ public final class DeadmanManager {
         boolean success = false;
         for (String r : receiver) {
             if (r != null) {
-                success = success | mailHandler.sendMail(r, title, message);
+                success = success | mailHandler.queueMail(r, title, message);
             }
         }
         return success;
