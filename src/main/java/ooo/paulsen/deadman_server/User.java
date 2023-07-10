@@ -1,3 +1,5 @@
+package ooo.paulsen.deadman_server;
+
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 

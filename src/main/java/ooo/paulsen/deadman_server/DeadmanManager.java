@@ -1,3 +1,5 @@
+package ooo.paulsen.deadman_server;
+
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.util.*;
@@ -25,7 +27,7 @@ public final class DeadmanManager {
     private final Timer timeChecker;
 
 
-    private DeadmanManager(int httpPort, String mailAddress, long checkInterval) throws IOException {
+    public DeadmanManager(int httpPort, String mailAddress, long checkInterval) throws IOException {
         if (instance != null)
             throw new InvalidObjectException("Deadman Can only exist once!");
         instance = this;

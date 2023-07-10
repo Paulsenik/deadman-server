@@ -1,3 +1,5 @@
+package ooo.paulsen.deadman_server;
+
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 

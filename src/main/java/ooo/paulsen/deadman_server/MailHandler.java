@@ -1,3 +1,5 @@
+package ooo.paulsen.deadman_server;
+
 import com.github.cliftonlabs.json_simple.JsonException;
 import com.github.cliftonlabs.json_simple.JsonObject;
 import com.github.cliftonlabs.json_simple.Jsoner;
@@ -8,6 +10,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.*;
 
 public class MailHandler {
 
@@ -15,6 +18,8 @@ public class MailHandler {
     private final String password;
     private final String hostname;
     private final String smtpPort;
+
+    Queue<List<String>> queue = new LinkedList<>();
 
     private Thread queueHandler;
 
@@ -49,11 +54,15 @@ public class MailHandler {
             @Override
             public void run() {
                 while (true) {
-                    // TODO
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                    if (queue.isEmpty()) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    } else {
+                        List<String> mailInfo = queue.remove();
+                        sendMail(mailInfo.get(0), mailInfo.get(1), mailInfo.get(2));
                     }
                 }
             }
@@ -63,12 +72,16 @@ public class MailHandler {
 
     public synchronized boolean queueMail(String receiver, String subject, String message) {
         try {
-            System.err.println("MAIL> " + username + " -> " + receiver + " : " + subject + "\n" + message);
-
+            List<String> s = new ArrayList<>();
+            s.add(receiver);
+            s.add(subject);
+            s.add(message);
+            queue.add(s);
             DeadmanManager.instance.log("[Mail] :: [sender=" + username + "],[receiver=" + receiver + "],[title=" + subject + "] :: delivered successfully!");
             return true;
         } catch (RuntimeException e) {
             DeadmanManager.instance.log("[Mail] :: [sender=" + username + "],[receiver=" + receiver + "],[title=" + subject + "] :: could not be delivered!");
+            e.printStackTrace();
             return false;
         }
     }
@@ -98,11 +111,6 @@ public class MailHandler {
             return false;
         }
         return true;
-    }
-
-    public static void main(String[] args) throws IOException, JsonException {
-
-
     }
 
 }
